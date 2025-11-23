@@ -1,0 +1,28 @@
+@startuml Provisioning Flow for Product Authentication
+
+actor Owner
+participant Provisioning_Station
+participant NFC_Tag as Tag
+participant Solana_Blockchain as Solana
+
+' --- Start ---
+Owner -> Provisioning_Station : Start provisioning process
+
+' --- On-Chip Key Generation ---
+Provisioning_Station -> Tag : Generate ECC keypair\n(private key stored on-chip)
+Tag --> Provisioning_Station : Return public key
+
+' --- Store Public Key in Product Record ---
+Provisioning_Station -> Provisioning_Station : Create product entry\nAttach public key + metadata
+
+' --- Optional: Write Metadata to Tag ---
+Provisioning_Station -> Tag : Write product metadata\n(public key, owner ID, etc.)
+
+' --- Blockchain Registration ---
+Provisioning_Station -> Solana : Register product public key\nunder owner account
+Solana --> Provisioning_Station : Registration confirmed
+
+' --- Finalization ---
+Provisioning_Station -> Owner : Provisioning completed\nProduct ready for shipping
+
+@enduml

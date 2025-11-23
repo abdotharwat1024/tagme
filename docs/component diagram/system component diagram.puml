@@ -1,0 +1,36 @@
+@startuml System Component Diagram
+
+' --- Components ---
+package "Owner Infrastructure" {
+    [Provisioning Station] <<component>>
+    [Owner Backend] <<component>>
+}
+
+package "Product Hardware" {
+    [Secure NFC Tag\n(NTAG-X-DNA)] <<component>>
+}
+
+package "User Environment" {
+    [Mobile App] <<component>>
+}
+
+package "Blockchain Network" {
+    [Solana Blockchain] <<component>>
+}
+
+' --- Relationships ---
+
+' Provisioning Phase
+[Owner Backend] --> [Provisioning Station] : Production data\n(Key policies, metadata)
+[Provisioning Station] --> [Secure NFC Tag\n(NTAG-X-DNA)] : Keypair generation\nMetadata write
+[Provisioning Station] --> [Solana Blockchain] : Register product public key\n(on-chain transaction)
+
+' Interaction Phase
+[Mobile App] --> [Secure NFC Tag\n(NTAG-X-DNA)] : NFC communication\n(Read pubkey, request signature)
+[Mobile App] --> [Solana Blockchain] : Verify public key ownership\nCheck authenticity
+
+' Optional backend verification layer
+[Mobile App] --> [Owner Backend] : Fetch product info \n(optional)
+[Owner Backend] --> [Solana Blockchain] : Query blockchain state \n(optional)
+
+@enduml

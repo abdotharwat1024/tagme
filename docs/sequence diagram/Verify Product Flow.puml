@@ -1,0 +1,20 @@
+@startuml Verify Product Flow
+
+actor Collector
+participant Product
+participant Mobile_App
+participant Solana_Blockchain
+
+Collector -> Product : Tap product
+Mobile_App -> Collector : Display the options
+
+Collector -> Mobile_App : Request verification
+Mobile_App -> Product : Send challenge
+Product -> Mobile_App : Signed challenge\n(using private key)
+
+Mobile_App -> Solana_Blockchain : Verify ownership\n(using public keys)
+Solana_Blockchain -> Mobile_App : Verification result
+
+Mobile_App -> Collector : Show authenticity result
+
+@enduml

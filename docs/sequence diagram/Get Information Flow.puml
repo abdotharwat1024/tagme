@@ -1,0 +1,16 @@
+@startuml Get Information Flow
+
+actor Collector
+participant Product
+participant Mobile_App
+
+Collector -> Product : Tap product
+Mobile_App -> Collector : Display the options
+
+Collector -> Mobile_App : Request product information
+Mobile_App -> Product : Read product metadata
+Product -> Mobile_App : Product pubkey\nOwner pubkey\nOther metadata
+
+Mobile_App -> Collector : Display product information
+
+@enduml

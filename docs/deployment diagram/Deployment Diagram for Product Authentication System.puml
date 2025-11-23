@@ -1,0 +1,36 @@
+@startuml Deployment Diagram for Product Authentication System
+
+node "Collector Device\n(Smartphone)" {
+    component "Mobile App" as MobileApp
+}
+
+node "Physical Product" {
+    component "Secure NFC Tag\n(NTAG-X-DNA)" as Tag
+}
+
+node "Owner Infrastructure" {
+    node "Provisioning Station" {
+        component "Provisioning Software" as ProvSW
+    }
+    component "Owner Backend" as Backend
+}
+
+node "Internet" {
+    node "Solana RPC Network" {
+        component "Solana Blockchain" as Solana
+    }
+}
+
+' --- Deployments & Communication Channels ---
+
+' Collector interactions
+MobileApp --> Tag : NFC communication\n(ISO 14443-4, Challenge/Response)
+MobileApp --> Solana : HTTPS / RPC calls\n(verify public key ownership)
+MobileApp --> Backend : Optional API calls\n(fetch product info)
+
+' Owner provisioning
+ProvSW --> Tag : NFC/I2C provisioning\n(generate keypair, write metadata)
+ProvSW --> Solana : Transaction submission\n(register product public key)
+ProvSW --> Backend : Product database entry\n(store metadata & public key)
+
+@enduml

@@ -1,0 +1,33 @@
+@startuml transfer ownership
+
+actor CurrentOwner
+actor NewOwner
+participant Mobile_App
+participant Solana_Program
+participant UserAccount as OwnerAccount
+participant UserAccount as NewOwnerAccount
+participant ProductRegistryAccount
+participant OwnershipHistoryAccount
+
+CurrentOwner -> Mobile_App : Initiate transfer to NewOwner
+Mobile_App -> Solana_Program : transfer_ownership(product_pubkey, new_owner_pubkey)
+
+Solana_Program -> ProductRegistryAccount : Load product
+ProductRegistryAccount --> Solana_Program : Data
+
+Solana_Program -> OwnerAccount : Validate signer is current owner
+OwnerAccount --> Solana_Program : OK
+
+Solana_Program -> NewOwnerAccount : Validate new owner exists
+NewOwnerAccount --> Solana_Program : OK
+
+Solana_Program -> ProductRegistryAccount : Update owner_pubkey
+ProductRegistryAccount --> Solana_Program : Owner updated
+
+Solana_Program -> OwnershipHistoryAccount : Append previous owner
+OwnershipHistoryAccount --> Solana_Program : History updated
+
+Solana_Program -> Mobile_App : Transfer complete
+Mobile_App -> CurrentOwner : Display success
+
+@enduml

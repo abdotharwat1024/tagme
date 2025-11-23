@@ -1,0 +1,66 @@
+@startuml Solana On-Chain Program - Class Diagram
+
+' ---------------------------
+' Core Accounts / Structures
+' ---------------------------
+class UserAccount {
+    + user_pubkey : Pubkey
+    + name : String
+    + url : String
+    + bump: u8
+}
+
+class ProductRegistryAccount {
+    + product_pubkey : Pubkey     ' immutable
+    + author_pubkey : Pubkey      ' immutable
+    + owner_pubkey : Pubkey       ' mutable
+    + metadata_hash : [u8; 32]
+    + created_at : u64
+    + bump: u8
+    + status : ProductStatus
+}
+
+enum ProductStatus {
+    ACTIVE
+    REVOKED
+}
+
+class ProgramState {
+    + admin_pubkey : Pubkey
+    + version : u8
+}
+
+class OwnershipHistoryAccount {
+    + product_pubkey : Pubkey
+    + previous_owners : Vec<Pubkey>
+    + last_transfer_at : u64
+    + bump: u8
+}
+
+' ---------------------------
+' Instructions (Methods)
+' ---------------------------
+
+class Instructions {
+    + register_user()
+    + register_product()
+    + transfer_ownership()
+    + update_product_metadata()
+    + revoke_product()
+}
+
+' ---------------------------
+' Relationships
+' ---------------------------
+
+UserAccount "1" --> "*" ProductRegistryAccount : author of >
+UserAccount "1" --> "*" ProductRegistryAccount : owns >
+ProgramState --> Instructions : controls >
+Instructions --> UserAccount : reads/writes >
+Instructions --> ProductRegistryAccount : reads/writes >
+Instructions --> OwnershipHistoryAccount : updates >
+ProductRegistryAccount "1" --> "0..1" OwnershipHistoryAccount : history >
+
+
+
+@enduml

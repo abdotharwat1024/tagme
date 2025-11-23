@@ -1,0 +1,29 @@
+@startuml register product
+
+actor Author
+participant Provisioning_Station
+participant Solana_Program
+participant UserAccount
+participant ProductRegistryAccount
+participant OwnershipHistoryAccount
+
+Author -> Provisioning_Station : Start provisioning
+Provisioning_Station -> Product : Generate keypair
+Product --> Provisioning_Station : Return product_pubkey
+
+Provisioning_Station -> Solana_Program : register_product(product_pubkey, metadata_hash)
+
+Solana_Program -> UserAccount : Validate author (signer)
+UserAccount --> Solana_Program : OK
+
+Solana_Program -> ProductRegistryAccount : Create PDA with\nproduct_pubkey, author_pubkey, owner_pubkey
+ProductRegistryAccount --> Solana_Program : Created
+
+Solana_Program -> OwnershipHistoryAccount : Initialize history (optional)
+OwnershipHistoryAccount --> Solana_Program : Created
+
+Solana_Program -> Provisioning_Station : Product registered
+
+Provisioning_Station -> Author : Done
+
+@enduml

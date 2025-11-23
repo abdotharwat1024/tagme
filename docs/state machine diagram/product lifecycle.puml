@@ -1,0 +1,17 @@
+@startuml Product Lifecycle State Machine
+
+[*] --> Unregistered : Provisioning start\n(product_pubkey generated)
+
+Unregistered --> Registered : register_product()\n(author_pubkey set)
+
+Registered --> Active : On successful registration\n(owner_pubkey set)
+
+Active --> Active : transfer_ownership()\n(owner_pubkey updated)
+
+Active --> Active : update_product_metadata()\n(metadata_hash updated)
+
+Active --> Revoked : revoke_product()\n(status = REVOKED)
+
+Revoked --> [*] : End of lifecycle\n(no further changes allowed)
+
+@enduml

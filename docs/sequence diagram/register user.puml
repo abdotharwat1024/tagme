@@ -1,0 +1,18 @@
+@startuml register_user
+
+actor User
+participant Mobile_App
+participant Solana_Program
+participant UserAccount
+
+User -> Mobile_App : Request to register
+Mobile_App -> Solana_Program : register_user(user_pubkey, name, url)
+
+Solana_Program -> UserAccount : Create PDA (UserAccount)
+UserAccount --> Solana_Program : Account created (with bump)
+
+Solana_Program -> Mobile_App : Registration success
+
+Mobile_App -> User : Display confirmation
+
+@enduml
