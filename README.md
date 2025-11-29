@@ -1,190 +1,183 @@
-TagMe — Solana-Based Product Authenticity & Ownership Registry
+# **TagMe – Solana-Based Product Authenticity & Ownership Registry**
 
-TagMe is a decentralized product authenticity system built on Solana, designed to connect physical products to cryptographic identities stored on-chain.
+TagMe is a decentralized product authenticity platform built on **Solana**, enabling manufacturers and owners to bind physical products to cryptographic identities secured by NFC hardware chips.
 
-Each product contains an NFC tag capable of generating an ECC keypair.
-The public key is registered on Solana, while the private key stays inside the NFC chip forever.
-Users can verify authenticity by simply tapping the tag with their mobile device.
+Each product contains a secure NFC tag capable of generating an **ECC keypair**.
+The **public key** is registered on-chain, while the **private key** never leaves the chip.
 
-TagMe enables:
+Users verify authenticity with a simple **phone tap** — no apps, no accounts, no trust required.
 
-Product authenticity verification
+---
 
-Ownership tracking
+## **✨ Features**
 
-Anti-counterfeit protection
+### 🔐 Cryptographic Product Identity
 
-Tamper-proof provenance
+Each product contains a secure NFC chip with its own ECC keypair, enabling tamper-proof authentication.
 
-Trustless transfer of ownership
+### 📦 On-Chain Product Registry
 
-Optional ownership history
+Every product is stored on Solana with:
 
-## Features
-🔐 Cryptographic Product Identity
+* Immutable **author**
+* Mutable **owner**
+* Metadata hash
+* Lifecycle state
+* Creation timestamp
 
-Every product contains a secure NFC chip with its own ECC keypair.
+### 🔄 Ownership Transfers
 
-📦 On-Chain Product Registry
+Owners can securely transfer products on-chain without trusted intermediaries.
 
-Each product is linked to:
+### 🏛 Immutable Authorship
 
-A permanent author
+Once registered, the **author_pubkey** cannot be changed — eliminating counterfeit re-registration attacks.
 
-A current owner
+### 🔍 Client-Side Verification
 
-Its metadata hash
+Verification works by:
 
-Its lifecycle state
+1. Sending a challenge to the NFC tag
+2. Validating the signature with the product’s public key
+3. Fetching product data from Solana
+4. Ensuring the product is ACTIVE and authentic
 
-🔄 Ownership Transfers
+### 📚 Optional Ownership History
 
-Owners can transfer products securely on-chain.
+Products can optionally store their entire ownership timeline on-chain.
 
-🏛 Immutable Authorship
+---
 
-The author of a product can never be changed, preventing re-registration by counterfeiters.
+## **📐 Architecture Overview**
 
-🔍 Client-Side Verification
+TagMe is implemented as a Solana Anchor program and is composed of:
 
-The app verifies authenticity by:
+* **UserAccount** – represents both authors and owners
+* **ProductRegistryAccount** – main product identity record
+* **OwnershipHistoryAccount** – optional ownership history
+* **ProgramState** – global configuration
+* **Instructions** – the program’s allowed actions
 
-Sending a challenge to the NFC chip
+---
 
-Checking the cryptographic signature
+## **🗂 On-Chain Accounts**
 
-Fetching the product record from the blockchain
+### **UserAccount**
 
-📚 Optional Ownership History
+Holds information about an author or product owner.
 
-Products can store a full list of previous owners.
+| Field         | Type     |
+| ------------- | -------- |
+| `user_pubkey` | `Pubkey` |
+| `name`        | `String` |
+| `url`         | `String` |
+| `bump`        | `u8`     |
 
-## Architecture Overview
+---
 
-TagMe is built using Solana Anchor and consists of these core components:
+### **ProductRegistryAccount**
 
-UserAccount — represents authors and owners
+Main product identity stored on-chain.
 
-ProductRegistryAccount — main product record
+| Field            | Type            | Notes             |
+| ---------------- | --------------- | ----------------- |
+| `product_pubkey` | `Pubkey`        | Immutable         |
+| `author_pubkey`  | `Pubkey`        | Immutable         |
+| `owner_pubkey`   | `Pubkey`        | Mutable           |
+| `metadata_hash`  | `[u8; 32]`      | IPFS/Arweave hash |
+| `created_at`     | `u64`           | Timestamp         |
+| `status`         | `ProductStatus` | ACTIVE / REVOKED  |
+| `bump`           | `u8`            | PDA bump          |
 
-OwnershipHistoryAccount — optional owner trace
+---
 
-ProgramState — global admin/config state
+### **OwnershipHistoryAccount** (Optional)
 
-Instructions — the actions allowed by the program
+| Field              | Type          |
+| ------------------ | ------------- |
+| `product_pubkey`   | `Pubkey`      |
+| `previous_owners`  | `Vec<Pubkey>` |
+| `last_transfer_at` | `u64`         |
+| `bump`             | `u8`          |
 
-Below is the final UML class diagram the system is based on:
+---
 
-UserAccount "1" --> "*" ProductRegistryAccount : author of >
-UserAccount "1" --> "*" ProductRegistryAccount : owns >
-ProductRegistryAccount "1" --> "0..1" OwnershipHistoryAccount : history >
-ProgramState --> Instructions : controls >
+### **ProgramState**
 
-## On-Chain Accounts
-### UserAccount
+| Field          | Type     |
+| -------------- | -------- |
+| `admin_pubkey` | `Pubkey` |
+| `version`      | `u8`     |
 
-Represents any user in the system (authors and owners share the same type).
+---
 
-user_pubkey : Pubkey
-name        : String
-url         : String
-bump        : u8
+## **🔧 Instructions (Anchor Methods)**
 
-### ProductRegistryAccount
+### `register_user()`
 
-The main product record on-chain.
+Creates a new `UserAccount`.
 
-product_pubkey : Pubkey     (immutable)
-author_pubkey  : Pubkey     (immutable)
-owner_pubkey   : Pubkey     (mutable)
-metadata_hash  : [u8; 32]
-created_at     : u64
-status         : ProductStatus
-bump           : u8
-
-### OwnershipHistoryAccount (optional)
-product_pubkey  : Pubkey
-previous_owners : Vec<Pubkey>
-last_transfer_at : u64
-bump            : u8
-
-### ProgramState
-admin_pubkey : Pubkey
-version      : u8
-
-## Enum: ProductStatus
-ACTIVE
-REVOKED
-
-
-States are terminal:
-Once revoked, a product cannot return to ACTIVE.
-
-## Instructions (Anchor Methods)
-register_user()
-
-Creates a new UserAccount.
-
-register_product()
+### `register_product()`
 
 Registers a new product with immutable author and mutable owner.
 
-transfer_ownership()
+### `transfer_ownership()`
 
-Updates owner_pubkey and appends to OwnershipHistoryAccount.
+Transfers ownership from current owner to new owner and updates history.
 
-update_product_metadata()
+### `update_product_metadata()`
 
-Allows authors to update product metadata.
+Allows authors to modify product metadata (e.g., new IPFS hash).
 
-revoke_product()
+### `revoke_product()`
 
 Permanently disables a product.
+**Revocation is terminal** — a product cannot become ACTIVE again.
 
-## System Flows
-### 🔧 Provisioning / Manufacturing Workflow
+---
 
-NFC chip generates ECC keypair
+## **🔁 System Workflows**
 
-Author registers user account (UserAccount)
+### **1. Provisioning / Manufacturing**
 
-Author registers product (ProductRegistryAccount)
+1. NFC chip generates ECC keypair
+2. Author registers a `UserAccount`
+3. Author registers the product on-chain
+4. Product enters ACTIVE state
 
-Product becomes ACTIVE on-chain
+---
 
-### 📱 Verification Workflow (Phone Tap)
+### **2. Verification (Tap-to-Verify)**
 
-App sends a challenge to the product's NFC chip
+1. User taps product with phone
+2. App sends random challenge to NFC chip
+3. Chip signs with private key
+4. App verifies signature matches `product_pubkey`
+5. App fetches on-chain product record
+6. App checks:
 
-Chip signs the challenge with its private key
+   * signature validity
+   * `status == ACTIVE`
+   * expected author
+   * expected owner (optional)
 
-App fetches product data from Solana
+---
 
-App checks:
+### **3. Ownership Transfer**
 
-Signature matches product_pubkey
+1. Current owner signs transfer instruction
+2. Program ensures:
 
-status == ACTIVE
+   * signer is current owner
+   * product is ACTIVE
+3. Updates `owner_pubkey`
+4. Appends to ownership history (optional)
 
-Expected author
+---
 
-Expected owner (optional)
+## **🧭 Product Lifecycle**
 
-### 🔄 Ownership Transfer Workflow
-
-Current owner initiates transfer
-
-Program validates:
-
-signer is the current owner
-
-product is ACTIVE
-
-Updates owner_pubkey
-
-Updates OwnershipHistoryAccount
-
-## Product Lifecycle (State Machine)
+```
 [*] --> Unregistered
 Unregistered --> Registered : register_product()
 Registered --> Active
@@ -192,33 +185,54 @@ Active --> Active : transfer_ownership()
 Active --> Active : update_product_metadata()
 Active --> Revoked : revoke_product()
 Revoked --> [*]
+```
 
-## Why Solana?
+Lifecycle is simple, secure, and final.
 
-Ultra-low fees
+---
 
-High throughput
+## **⚡ Why Solana?**
 
-Fast verification
+* Ultra-low fees for frequent interactions
+* High throughput for real-time NFC taps
+* PDA-based identity system perfectly fits product accounts
+* Fast confirmation time for seamless user experience
 
-Perfect for real-time interactions like NFC taps
+---
 
-Supports PDA-based identity models
+## **🚀 Future Enhancements**
 
-## Future Enhancements
+* Hardware-based device attestation
+* Batch provisioning for manufacturers
+* IPFS/Arweave metadata standardization
+* Multi-signature author teams
+* Support for multiple NFC chip families
+* Manufacturer dashboards & analytics
 
-Device attestation & hardware security modules
+---
 
-Batch registration for manufacturers
+## **🧪 Development**
 
-Off-chain metadata with IPFS or Arweave
+### Build
 
-Open marketplace for authenticated products
+```bash
+anchor build
+```
 
-Multi-signature (multisig) author governance
+### Test
 
-Support for multiple tag types (NTAG, ST25TA-E, etc.)
+```bash
+anchor test
+```
 
-## License
+### Deploy
 
-MIT or Apache 2.0 (choose later)
+```bash
+solana program deploy target/deploy/tagme.so
+```
+
+---
+
+## **📄 License**
+
+Apache 2.0

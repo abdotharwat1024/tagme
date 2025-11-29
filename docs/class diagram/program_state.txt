@@ -1,0 +1,24 @@
+
+✅ What is ProgramState used for?
+
+1. Admin authority (governance)
+admin_pubkey gives you a single on-chain authority that controls privileged operations.
+Examples of admin-only actions:
+pausing the program
+disabling product registration temporarily
+migrating data
+upgrading the program in a controlled way
+emergency revocation of counterfeit batches
+
+
+2. Versioning for upgrades
+version: u8 stores the program version on-chain so your app knows:
+Which API version the program is running
+Whether an upgrade has occurred
+Whether clients should use new or old metadata formats
+Why?
+Solana programs evolve. When you upgrade and change struct layouts or behaviors, mobile apps must recognize that.
+if program.version < 2:
+    // old metadata parsing
+else:
+    // new metadata rules
