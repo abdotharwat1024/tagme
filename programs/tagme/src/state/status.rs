@@ -1,4 +1,4 @@
 pub enum ProductStatus {
     ACTIVE,
-    REVOKED
+    REVOKED,
 }

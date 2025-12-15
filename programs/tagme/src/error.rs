@@ -10,4 +10,8 @@ pub enum TagMeError {
     InvalidMetadata,
     #[msg("History account missing.")]
     MissingHistory,
+    #[msg("Invalid Name.")]
+    InvalidName,
+    #[msg("Invalid url.")]
+    InvalidUrl,
 }

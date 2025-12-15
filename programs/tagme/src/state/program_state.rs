@@ -1,6 +1,6 @@
 use anchor_lang::prelude::Pubkey;
 
-pub struct ProgramState{
+pub struct ProgramState {
     admin_pubkey: Pubkey,
-    version: u8
+    version: u8,
 }
