@@ -9,21 +9,14 @@ pub struct User {
 }
 
 impl User {
+    const BUMPSIZE: usize = 1; // bump
     pub const MAX_NAME_LEN: usize = 32;
     pub const MAX_URL_LEN: usize = 64;
-    pub const DISCRIMINATOR_LENGTH: usize = 8;
-    pub const DATA_SIZE: usize = 8_usize // user_pubkey: Pubkey
-        .checked_add(
-            Self::MAX_NAME_LEN, // name: String
-        )
+    pub const LEN: usize = 8_usize // user_pubkey: Pubkey
+        .checked_add(Self::MAX_NAME_LEN)
         .unwrap()
-        .checked_add(
-            Self::MAX_URL_LEN, // url: String,
-        )
+        .checked_add(Self::MAX_URL_LEN)
         .unwrap()
-        .checked_add(
-            1, // bump: u8
-        )
+        .checked_add(Self::BUMPSIZE)
         .unwrap();
-    pub const LEN: usize = usize::checked_add(Self::DATA_SIZE, Self::DISCRIMINATOR_LENGTH).unwrap();
 }

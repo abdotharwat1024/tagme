@@ -12,7 +12,7 @@ pub struct RegisterUser<'info> {
         seeds = [USER_ACC_SEED, authority.key().as_ref()],
         bump,
         payer = authority,
-        space = User::LEN
+        space = User::LEN + 8,
     )]
     pub user: Account<'info, User>,
     pub system_program: Program<'info, System>,
