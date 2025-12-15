@@ -96,7 +96,7 @@ Main product identity stored on-chain.
 | Field              | Type          |
 | ------------------ | ------------- |
 | `product_pubkey`   | `Pubkey`      |
-| `previous_owners`  | `Vec<Pubkey>` |
+| `previous_owners`  | `[Pubkey; 5]` |
 | `last_transfer_at` | `u64`         |
 | `bump`             | `u8`          |
 

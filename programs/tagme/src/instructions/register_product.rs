@@ -1,4 +1,5 @@
-use crate::state::{ProductRegistry, ProductStatus};
+use crate::instructions::PRODUCT_HISTORY_SEED;
+use crate::state::{OwnershipHistory, ProductRegistry, ProductStatus};
 use anchor_lang::prelude::*;
 
 const PRODUCT_ACC_SEED: &[u8] = b"product";
@@ -16,6 +17,14 @@ pub struct RegisterProduct<'info> {
         space = ProductRegistry::LEN + 8,
     )]
     pub product: Account<'info, ProductRegistry>,
+    #[account(
+        init,
+        payer = authority,
+        seeds = [PRODUCT_HISTORY_SEED, product_pubkey.key().as_ref()],
+        bump,
+        space = OwnershipHistory::LEN + 8,
+    )]
+    pub product_history: Account<'info, OwnershipHistory>,
     pub system_program: Program<'info, System>,
 }
 
@@ -24,15 +33,21 @@ pub fn handler(
     product_pubkey: Pubkey,
     metadata: [u8; 32],
 ) -> Result<()> {
-    let prod = &mut ctx.accounts.product;
+    let product = &mut ctx.accounts.product;
+    let product_history = &mut ctx.accounts.product_history;
 
-    prod.product_pubkey = product_pubkey;
-    prod.auther_pubkey = ctx.accounts.authority.key();
-    prod.owner_pubkey = ctx.accounts.authority.key();
-    prod.creation_date = Clock::get()?.unix_timestamp as u64;
-    prod.metadata_hash = metadata;
-    prod.bump = ctx.bumps.product;
-    prod.status = ProductStatus::ACTIVE;
+    product.product_pubkey = product_pubkey;
+    product.auther_pubkey = ctx.accounts.authority.key();
+    product.owner_pubkey = ctx.accounts.authority.key();
+    product.creation_date = Clock::get()?.unix_timestamp as u64;
+    product.metadata_hash = metadata;
+    product.bump = ctx.bumps.product;
+    product.status = ProductStatus::ACTIVE;
+
+    product_history.product_pubkey = product.product_pubkey;
+    product_history.previous_owners[0] = product.product_pubkey;
+    product_history.last_transfer_time = product.creation_date;
+    product_history.bump = ctx.bumps.product_history;
 
     Ok(())
 }

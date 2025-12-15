@@ -32,7 +32,7 @@ class ProgramState {
 
 class OwnershipHistoryAccount {
     + product_pubkey : Pubkey
-    + previous_owners : Vec<Pubkey>
+    + previous_owners : [Pubkey; 5]
     + last_transfer_at : u64
     + bump: u8
 }
@@ -47,6 +47,7 @@ class Instructions {
     + transfer_ownership()
     + update_product_metadata()
     + revoke_product()
+    + history_update()
 }
 
 ' ---------------------------
@@ -59,7 +60,7 @@ ProgramState --> Instructions : controls >
 Instructions --> UserAccount : reads/writes >
 Instructions --> ProductRegistryAccount : reads/writes >
 Instructions --> OwnershipHistoryAccount : updates >
-ProductRegistryAccount "1" --> "0..1" OwnershipHistoryAccount : history >
+ProductRegistryAccount "1" --> "1" OwnershipHistoryAccount : history >
 
 
 
