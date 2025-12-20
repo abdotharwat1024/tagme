@@ -47,7 +47,6 @@ class Instructions {
     + transfer_ownership()
     + update_product_metadata()
     + revoke_product()
-    + history_update()
 }
 
 ' ---------------------------

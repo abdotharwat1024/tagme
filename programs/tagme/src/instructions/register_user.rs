@@ -1,7 +1,8 @@
-use crate::{error::TagMeError, state::User};
+use crate::{
+    error::TagMeError,
+    state::{User, USER_ACC_SEED},
+};
 use anchor_lang::prelude::*;
-
-pub const USER_ACC_SEED: &[u8] = b"user_account";
 
 #[derive(Accounts)]
 pub struct RegisterUser<'info> {
@@ -12,7 +13,7 @@ pub struct RegisterUser<'info> {
         seeds = [USER_ACC_SEED, authority.key().as_ref()],
         bump,
         payer = authority,
-        space = User::LEN + 8,
+        space = User::INIT_SPACE + 8,
     )]
     pub user: Account<'info, User>,
     pub system_program: Program<'info, System>,

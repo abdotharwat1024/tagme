@@ -12,7 +12,7 @@ impl User {
     const BUMPSIZE: usize = 1; // bump
     pub const MAX_NAME_LEN: usize = 32;
     pub const MAX_URL_LEN: usize = 64;
-    pub const LEN: usize = 8_usize // user_pubkey: Pubkey
+    pub const INIT_SPACE: usize = 8_usize // user_pubkey: Pubkey
         .checked_add(Self::MAX_NAME_LEN)
         .unwrap()
         .checked_add(Self::MAX_URL_LEN)

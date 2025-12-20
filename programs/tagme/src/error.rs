@@ -14,4 +14,8 @@ pub enum TagMeError {
     InvalidName,
     #[msg("Invalid url.")]
     InvalidUrl,
+    #[msg("Wrong history account.")]
+    InvalidHistory,
+    #[msg("Invalid self transfering.")]
+    InvalidAccount,
 }
