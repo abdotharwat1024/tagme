@@ -6,12 +6,13 @@ use crate::state::{
 use anchor_lang::prelude::*;
 
 #[derive(Accounts)]
+#[instruction(product_pubkey: Pubkey)]
 pub struct TransferOwnership<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
-    #[account(mut, seeds=[PRODUCT_ACC_SEED, product_acc.product_pubkey.as_ref()], bump = product_acc.bump)]
+    #[account(mut, seeds=[PRODUCT_ACC_SEED, product_pubkey.as_ref()], bump = product_acc.bump)]
     pub product_acc: Account<'info, ProductRegistry>,
-    #[account(mut, seeds=[PRODUCT_HISTORY_SEED, product_acc.product_pubkey.as_ref()], bump = history_acc.bump)]
+    #[account(mut, seeds=[PRODUCT_HISTORY_SEED, product_pubkey.as_ref()], bump = history_acc.bump)]
     pub history_acc: Account<'info, OwnershipHistory>,
 }
 
