@@ -18,4 +18,6 @@ pub enum TagMeError {
     InvalidHistory,
     #[msg("Invalid self transfering.")]
     InvalidAccount,
+    #[msg("Unchanged meta-data.")]
+    MetadataUnchanged,
 }

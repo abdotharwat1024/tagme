@@ -1,3 +1,4 @@
+use crate::error::TagMeError;
 use crate::state::{OwnershipHistory, ProductRegistry, ProductStatus};
 use crate::state::{PRODUCT_ACC_SEED, PRODUCT_HISTORY_SEED};
 use anchor_lang::prelude::*;
@@ -34,6 +35,11 @@ pub fn handler(
     let product = &mut ctx.accounts.product;
     let product_history = &mut ctx.accounts.product_history;
     let now = Clock::get()?.unix_timestamp as u64;
+
+    require!(
+        product_pubkey != Pubkey::default(),
+        TagMeError::InvalidAccount
+    );
 
     product.product_pubkey = product_pubkey;
     product.author_pubkey = ctx.accounts.authority.key();

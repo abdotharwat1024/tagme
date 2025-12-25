@@ -25,11 +25,6 @@ enum ProductStatus {
     REVOKED
 }
 
-class ProgramState {
-    + admin_pubkey : Pubkey
-    + version : u8
-}
-
 class OwnershipHistoryAccount {
     + product_pubkey : Pubkey
     + previous_owners : [Pubkey; 5]
@@ -55,7 +50,6 @@ class Instructions {
 
 UserAccount "1" --> "*" ProductRegistryAccount : author of >
 UserAccount "1" --> "*" ProductRegistryAccount : owns >
-ProgramState --> Instructions : controls >
 Instructions --> UserAccount : reads/writes >
 Instructions --> ProductRegistryAccount : reads/writes >
 Instructions --> OwnershipHistoryAccount : updates >

@@ -55,7 +55,6 @@ TagMe is implemented as a Solana Anchor program and is composed of:
 * **UserAccount** – represents both authors and owners
 * **ProductRegistryAccount** – main product identity record
 * **OwnershipHistoryAccount** – optional ownership history
-* **ProgramState** – global configuration
 * **Instructions** – the program’s allowed actions
 
 ---
@@ -99,15 +98,6 @@ Main product identity stored on-chain.
 | `previous_owners`  | `[Pubkey; 5]` |
 | `last_transfer_at` | `u64`         |
 | `bump`             | `u8`          |
-
----
-
-### **ProgramState**
-
-| Field          | Type     |
-| -------------- | -------- |
-| `admin_pubkey` | `Pubkey` |
-| `version`      | `u8`     |
 
 ---
 
