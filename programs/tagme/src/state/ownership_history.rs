@@ -15,10 +15,13 @@ impl OwnershipHistory {
     const PUBKEYSIZES: usize = 32 + (5 * 32);
     const TIMESIZE: usize = 8;
     const BUMPSIZE: usize = 1;
+    const HEADSIZE: usize = 1;
 
     pub const INIT_SPACE: usize = Self::PUBKEYSIZES
         .checked_add(Self::TIMESIZE)
         .unwrap()
         .checked_add(Self::BUMPSIZE)
+        .unwrap()
+        .checked_add(Self::HEADSIZE)
         .unwrap();
 }

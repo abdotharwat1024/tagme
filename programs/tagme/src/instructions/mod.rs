@@ -1,8 +1,8 @@
-mod register_product;
-mod register_user;
-mod revoke_product;
-mod transfer_ownership;
-mod update_metadata;
+pub mod register_product;
+pub mod register_user;
+pub mod revoke_product;
+pub mod transfer_ownership;
+pub mod update_metadata;
 
 pub use register_product::*;
 pub use register_user::*;
