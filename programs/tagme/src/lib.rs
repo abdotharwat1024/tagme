@@ -22,13 +22,13 @@ pub mod tagme {
         register_user::handler(ctx, name, url)
     }
 
-    pub fn revoke_product(ctx: Context<RevokeProduct>, product_pubkey: Pubkey) -> Result<()> {
+    pub fn revoke_product(ctx: Context<RevokeProduct>, _product_pubkey: Pubkey) -> Result<()> {
         revoke_product::handler(ctx)
     }
 
     pub fn transfer_ownership(
         ctx: Context<TransferOwnership>,
-        product_pubkey: Pubkey,
+        _product_pubkey: Pubkey,
         new_owner: Pubkey,
     ) -> Result<()> {
         transfer_ownership::handler(ctx, new_owner)
@@ -36,7 +36,7 @@ pub mod tagme {
 
     pub fn update_metadata(
         ctx: Context<UpdateMetadata>,
-        product_pubkey: Pubkey,
+        _product_pubkey: Pubkey,
         new_hash: [u8; 32],
     ) -> Result<()> {
         update_metadata::handler(ctx, new_hash)

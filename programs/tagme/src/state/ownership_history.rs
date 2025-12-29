@@ -12,7 +12,7 @@ pub struct OwnershipHistory {
 }
 
 impl OwnershipHistory {
-    const PUBKEYSIZES: usize = 32 + (5 * 32);
+    const PUBKEYSIZES: usize = 32 + (MAX_HISTORY * 32);
     const TIMESIZE: usize = 8;
     const BUMPSIZE: usize = 1;
     const HEADSIZE: usize = 1;
