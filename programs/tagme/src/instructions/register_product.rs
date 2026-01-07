@@ -40,10 +40,7 @@ pub fn handler(
         product_pubkey != Pubkey::default(),
         TagMeError::InvalidAccount
     );
-    require!(
-        metadata != [0u8; 32], 
-        TagMeError::InvalidMetadata
-    );    
+    require!(metadata != [0u8; 32], TagMeError::InvalidMetadata);
 
     product.product_pubkey = product_pubkey;
     product.author_pubkey = ctx.accounts.authority.key();

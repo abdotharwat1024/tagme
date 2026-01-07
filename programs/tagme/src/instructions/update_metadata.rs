@@ -30,10 +30,7 @@ pub fn handler(ctx: Context<UpdateMetadata>, new_hash: [u8; 32]) -> Result<()> {
         product.metadata_hash != new_hash,
         TagMeError::MetadataUnchanged
     );
-    require!(
-        new_hash != [0u8; 32], 
-        TagMeError::InvalidMetadata
-    );
+    require!(new_hash != [0u8; 32], TagMeError::InvalidMetadata);
     product.metadata_hash = new_hash;
 
     Ok(())

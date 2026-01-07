@@ -33,10 +33,7 @@ pub fn handler(ctx: Context<TransferOwnership>, new_owner: Pubkey) -> Result<()>
         product.status == ProductStatus::Active,
         TagMeError::ProductRevoked
     );
-    require!(
-        new_owner != Pubkey::default(), 
-        TagMeError::InvalidAccount
-    );
+    require!(new_owner != Pubkey::default(), TagMeError::InvalidAccount);
     require!(
         product.product_pubkey == history.product_pubkey,
         TagMeError::InvalidHistory
